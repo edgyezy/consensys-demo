@@ -24,6 +24,7 @@
 	</properties>
 
     <modules>
+        <module>demo-common</module>
         <module>demo-pdf</module>
         <module>demo-web</module>
     </modules>
