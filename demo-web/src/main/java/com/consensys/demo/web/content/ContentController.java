@@ -1,5 +1,6 @@
 package com.consensys.demo.web.content;
 
+import com.consensys.demo.common.messaging.ContentMessage;
 import com.consensys.demo.web.auth.Account;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -7,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,6 +20,7 @@ import java.io.OutputStream;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.consensys.demo.common.messaging.ContentMessage.Action.CREATED;
 import static com.consensys.demo.web.content.UserContent.UploadStatus;
 import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 import static javax.servlet.http.HttpServletResponse.SC_OK;
@@ -36,6 +39,9 @@ public class ContentController {
 
     @Autowired
     private ContentIndexRepository contentIndexRepository;
+
+    @Autowired
+    private JmsTemplate jmsTemplate;
 
 
     @GetMapping("/api/images")
@@ -72,6 +78,7 @@ public class ContentController {
         try {
             content = contentManager.createContent(account, contentType, file.getName());
             contentManager.write(file.getInputStream(), content);
+            jmsTemplate.convertAndSend("images", new ContentMessage(CREATED, content.getContentId()));
             return new ResponseEntity<>(new ContentDTO(content), HttpStatus.OK);
         } catch(IOException e) {
             contentManager.cancelContent(content);

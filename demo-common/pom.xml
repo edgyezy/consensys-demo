@@ -4,11 +4,11 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.consensys</groupId>
-	<artifactId>demo-pdf</artifactId>
+	<artifactId>demo-common</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>demo-pdf</name>
+	<name>demo-common</name>
 
 	<parent>
 		<groupId>com.consensys</groupId>
@@ -23,25 +23,11 @@
 		<java.version>1.8</java.version>
 	</properties>
 
-	<dependencies>
-        <dependency>
-            <groupId>com.consensys</groupId>
-            <artifactId>demo-common</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-	</dependencies>
+    <dependencies>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <executable>true</executable>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+
+
+    </dependencies>
 
 
 </project>
