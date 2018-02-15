@@ -16,43 +16,29 @@
         <div class="vertical-align-middle">
             <form class="paper">
                 <div class="form-group">
-                    <label>Username</label>
+                    <label>Please choose a username</label>
                     <input class="form-control" type="text" name="username" placeholder="Email">
                 </div>
                 <div class="form-group">
-                    <label>Password</label>
+                    <label>Please choose a password </label>
                     <input class="form-control" type="password" name="password" placeholder="Password">
                 </div>
 
                 <div class="button-bar">
-                    <a href="/signup.html" class="btn btn-link">Sign up</a>
-                    <input type="submit" class="btn btn-primary" value="Login"/>
+                    <input type="reset" class="btn btn-link" value="Cancel"/>
+                    <input type="submit" class="btn btn-primary" value="Register"/>
                 </div>
             </form>
         </div>
     </div>
 
     <script>
-	    $(document).ready(function() {
-		    $("form").submit(function(evt) {
-		    	evt.preventDefault();
+        $(document).ready(function() {
 
-		    	var username = $("input[name='username']").val();
-		    	var password = $("input[name='password']").val();
-
-		    	$.ajax({
-                    type : "POST",
-                    url : "/api/login",
-                    headers : {
-                    	authorization : "Basic " + btoa(username + ":" + password)
-                    }
-                }).done(function() {
-				    window.location = "/app.html"
-			    }).fail(function(err) {
-                    console.log("login failed");
-                });
-		    });
-	    })
+	        $("input[type='reset']").click(function(evt) {
+        		window.location = "/";
+            });
+        })
     </script>
 
 </body>

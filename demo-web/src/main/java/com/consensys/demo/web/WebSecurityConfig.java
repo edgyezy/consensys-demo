@@ -66,9 +66,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .mvcMatchers(HttpMethod.POST, "/api/register").permitAll()
                     .mvcMatchers(HttpMethod.GET,
                             "/api/images",
-                            "/**.js",
-                            "/**.html",
-                            "/**.css").permitAll()
+                            "/**/*.js",
+                            "/**/*.html",
+                            "/**/*.css").permitAll()
                     .anyRequest().authenticated()
                 .and()
                     .formLogin()
