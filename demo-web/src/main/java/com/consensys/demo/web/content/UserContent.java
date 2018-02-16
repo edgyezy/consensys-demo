@@ -11,7 +11,6 @@ import javax.persistence.*;
 @Entity
 public class UserContent {
 
-    public enum UploadStatus { IN_PROGRESS, FINISHED, CANCELLED}
 
     @Id
     @GeneratedValue
@@ -23,9 +22,7 @@ public class UserContent {
     private String fileName;
     private String contentId;
     private String contentType;
-
-    @Enumerated(EnumType.ORDINAL)
-    private UploadStatus uploadStatus = UploadStatus.IN_PROGRESS;
+    private Long contentLength;
 
     public Account getOwner() {
         return owner;
@@ -59,11 +56,11 @@ public class UserContent {
         this.contentType = contentType;
     }
 
-    public UploadStatus getUploadStatus() {
-        return uploadStatus;
+    public Long getContentLength() {
+        return contentLength;
     }
 
-    public void setUploadStatus(UploadStatus status) {
-        this.uploadStatus = status;
+    public void setContentLength(Long contentLength) {
+        this.contentLength = contentLength;
     }
 }

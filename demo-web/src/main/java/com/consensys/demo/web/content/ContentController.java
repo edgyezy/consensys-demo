@@ -8,12 +8,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jms.JmsException;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -21,7 +23,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.consensys.demo.common.messaging.ContentMessage.Action.CREATED;
-import static com.consensys.demo.web.content.UserContent.UploadStatus;
 import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 import static javax.servlet.http.HttpServletResponse.SC_OK;
 
@@ -51,7 +52,7 @@ public class ContentController {
             account = (Account)authentication.getPrincipal();
         }
 
-        List<ContentDTO> responseBody = contentIndexRepository.findByOwner(account, UploadStatus.FINISHED).stream()
+        List<ContentDTO> responseBody = contentIndexRepository.findByOwner(account).stream()
                 .map(userContent -> new ContentDTO(userContent))
                 .collect(Collectors.toList());
 
@@ -74,23 +75,29 @@ public class ContentController {
             return new ResponseEntity<>("Bad content type, this endpoint only accepts JPEG and PNG images.", HttpStatus.BAD_REQUEST);
         }
 
-        UserContent content = null;
         try {
-            content = contentManager.createContent(account, contentType, file.getName());
-            contentManager.write(file.getInputStream(), content);
+            File contentFile = contentManager.write(file.getInputStream(), contentType);
+            UserContent content = contentManager.createContent(account, contentType, contentFile.getName(), file.getName(), file.getSize());
+
             jmsTemplate.convertAndSend("images", new ContentMessage(CREATED, content.getContentId()));
             return new ResponseEntity<>(new ContentDTO(content), HttpStatus.OK);
-        } catch(IOException e) {
-            contentManager.cancelContent(content);
-            log.error("Failed to handle content upload, this should never happen", e);
+        } catch(IOException | JmsException e) {
+            log.error("Failed to handle content upload", e);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-
     @GetMapping("/content/{contentId}")
     public void getContent(@PathVariable("contentId") String contentId, HttpServletResponse response) {
         try {
+            UserContent content = contentIndexRepository.findByContentId(contentId);
+
+            response.setContentType(content.getContentType());
+            Long contentLength = content.getContentLength();
+            if(contentLength != null) {
+                response.setContentLengthLong(contentLength);
+            }
+
             OutputStream outStream = response.getOutputStream();
             contentManager.read(contentId, outStream);
             outStream.flush();

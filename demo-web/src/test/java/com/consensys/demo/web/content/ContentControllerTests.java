@@ -68,7 +68,7 @@ public class ContentControllerTests {
 
         controller.acceptImage(file, auth);
 
-        List<UserContent> result = indexRepository.findByOwner(account, UserContent.UploadStatus.FINISHED);
+        List<UserContent> result = indexRepository.findByOwner(account);
         assertEquals(1, result.size());
 
         UserContent savedContent = result.get(0);
