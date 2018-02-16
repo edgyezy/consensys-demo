@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+        th:fragment="loginLayout">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Image to PDF converter</title>
+    <link type="text/css" rel="stylesheet" href="/lib/bootstrap-4.0.0-dist/css/bootstrap.css"/>
+    <link type="text/css" rel="stylesheet" href="/lib/bootstrap-4.0.0-dist/css/bootstrap-grid.css"/>
+    <link type="text/css" rel="stylesheet" href="/lib/bootstrap-4.0.0-dist/css/bootstrap-reboot.css"/>
+
+    <link type="text/css" rel="stylesheet" href="/styles.css"/>
+    <script type="application/javascript" src="/lib/jquery-3.3.1.min.js"></script>
+    <script type="application/javascript" src="/lib/bootstrap-4.0.0-dist/js/bootstrap.min.js"></script>
+</head>
+<body>
+    <div class="layout-table">
+        <div class="vertical-align-middle">
+            <form th:replace="this :: form"></form>
+        </div>
+    </div>
+
+    <script th:include="this::script"></script>
+</body>
+</html>

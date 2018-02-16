@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Image to PDF converter</title>
+    <link type="text/css" rel="stylesheet" href="/lib/bootstrap-4.0.0-dist/css/bootstrap.css"/>
+    <link type="text/css" rel="stylesheet" href="/lib/bootstrap-4.0.0-dist/css/bootstrap-grid.css"/>
+    <link type="text/css" rel="stylesheet" href="/lib/bootstrap-4.0.0-dist/css/bootstrap-reboot.css"/>
+
+    <link type="text/css" rel="stylesheet" href="/styles.css"/>
+    <script type="application/javascript" src="/lib/jquery-3.3.1.min.js"></script>
+    <script type="application/javascript" src="/lib/bootstrap-4.0.0-dist/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+    <script type="application/javascript">
+        $(document).ready(function() {
+            $.get("/api/images");
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:include="formLayout :: loginLayout">
+
+<body>
+    <div class="paper credentials" th:fragment="form">
+        <form class="signup">
+            <div class="form-group">
+                <label>Please choose a username</label>
+                <input class="form-control" type="text" name="username" placeholder="Email" required="true"/>
+            </div>
+            <div class="form-group">
+                <label>Please choose a password </label>
+                <input class="form-control" type="password" name="password" placeholder="Password" required="true"/>
+            </div>
+
+            <div class="error text-danger">
+                <span></span>
+            </div>
+
+            <div class="button-bar">
+                <a href="/" class="btn btn-link">Cancel</a>
+                <input type="submit" class="btn btn-primary" value="Sign up"/>
+            </div>
+        </form>
+
+        <div class="signup-success text-center d-none">
+            <p>Thank you for registering. Click <a href="/">here</a> to login.</p>
+        </div>
+    </div>
+
+
+    <script th:fragment="script">
+	    $(document).ready(function() {
+		    $("form").submit(function(evt) {
+			    evt.preventDefault();
+
+			    var username = $("input[name='username']").val();
+			    var password = $("input[name='password']").val();
+
+			    $.ajax({
+                    type : "POST",
+                    url : "/api/register",
+                    contentType : "application/json",
+                    data : JSON.stringify({
+	                    username : username,
+	                    password : password
+                    })
+                }).done(function() {
+				    $("form").remove();
+				    $(".signup-success").removeClass("d-none");
+			    }).fail(function(err) {
+			    	if(err.status == 400) {
+					    $(".error span").text(err.responseText);
+                    } else {
+					    $(".error span").text("Sign up failed. Please try again later");
+                    }
+			    });
+		    });
+	    });
+    </script>
+</body>
+</html>

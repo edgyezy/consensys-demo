@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:include="formLayout :: loginLayout">
+
+    <body>
+        <form class="paper credentials" th:fragment="form">
+            <div class="form-group">
+                <label>Username</label>
+                <input class="form-control" type="email" name="username" placeholder="Email" required="true"/>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input class="form-control" type="password" name="password" placeholder="Password" required="true"/>
+            </div>
+
+            <div class="error text-danger">
+                <span></span>
+            </div>
+
+            <div class="button-bar">
+                <a href="/signup.html" class="btn btn-link">Sign up</a>
+                <input type="submit" class="btn btn-primary" value="Login"/>
+            </div>
+        </form>
+
+        <script th:fragment="script">
+	        $(document).ready(function() {
+		        $("form").submit(function(evt) {
+			        evt.preventDefault();
+
+			        var username = $("input[name='username']").val();
+			        var password = $("input[name='password']").val();
+
+			        $.ajax({
+				        type : "POST",
+				        url : "/api/login",
+				        headers : {
+					        authorization : "Basic " + btoa(username + ":" + password)
+				        }
+			        }).done(function() {
+				        window.location = "/app.html"
+			        }).fail(function(err) {
+				        if(err.status == 401) {
+					        $(".error span").text("Invalid username or password");
+				        } else {
+					        $(".error span").text("Login failed. Please try again later");
+				        }
+			        });
+		        });
+	        })
+        </script>
+    </body>
+</html>

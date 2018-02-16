@@ -70,8 +70,8 @@ public class AuthenticationController {
         return new ResponseEntity(responseBody, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(InvalidCredentialsException.class)
-    public ResponseEntity handleDuplicateAccount(InvalidCredentialsException e) {
+    @ExceptionHandler(InvalidValueException.class)
+    public ResponseEntity handleInvalidCredentials(InvalidValueException e) {
         Map<String, String> responseBody = new HashMap<>();
         responseBody.put("message", e.getMessage());
         return new ResponseEntity(responseBody, HttpStatus.BAD_REQUEST);
