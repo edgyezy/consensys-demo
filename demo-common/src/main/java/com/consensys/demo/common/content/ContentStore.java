@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.UUID;
 
@@ -38,7 +39,10 @@ public class ContentStore {
             } catch(SecurityException e) {
                 log.error("Failed to create image root", e);
             }
+        } else {
+        		Files.list(imageRoot.toPath()).map(p -> p.toFile()).forEach(p->p.delete());
         }
+        
         if(!imageRoot.canRead() || !imageRoot.canWrite()) {
             throw new IOException("Read/write permissions missing for " + imageRootPath);
         }
@@ -51,6 +55,8 @@ public class ContentStore {
             } catch (SecurityException e) {
                 log.error("Failed to create pdf root", e);
             }
+        } else {
+        		Files.list(pdfRoot.toPath()).map(p -> p.toFile()).forEach(p->p.delete());
         }
         if(!pdfRoot.canRead() || !imageRoot.canWrite()) {
             throw new IOException("Read/write permissions missing for " + pdfRootPath);
