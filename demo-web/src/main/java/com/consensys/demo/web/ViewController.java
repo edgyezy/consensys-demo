@@ -33,7 +33,7 @@ public class ViewController {
     }
 
     @GetMapping("/app")
-    public String signupComplete(Map<String, Object> model, Authentication authentication) {
+    public String imageView(Map<String, Object> model, Authentication authentication) {
         Account account = null;
         if(authentication != null) {
             account = (Account)authentication.getPrincipal();
