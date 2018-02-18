@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -76,8 +75,8 @@ public class ContentController {
         }
 
         try {
-            File contentFile = contentManager.write(file.getInputStream(), contentType);
-            UserContent content = contentManager.createContent(account, contentType, contentFile.getName(), file.getName(), file.getSize());
+            String contentId = contentManager.write(file.getInputStream(), contentType);
+            UserContent content = contentManager.createContent(account, contentType, contentId, file.getName(), file.getSize());
 
             jmsTemplate.convertAndSend("images", new ContentMessage(CREATED, content.getContentId()));
             return new ResponseEntity<>(new ContentDTO(content), HttpStatus.OK);

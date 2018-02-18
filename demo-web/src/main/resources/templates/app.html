@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8"/>
+        <title>Image to PDF</title>
+        <title>Image to PDF converter</title>
+        <link type="text/css" rel="stylesheet" href="/lib/bootstrap-4.0.0-dist/css/bootstrap.css"/>
+        <link type="text/css" rel="stylesheet" href="/lib/bootstrap-4.0.0-dist/css/bootstrap-grid.css"/>
+        <link type="text/css" rel="stylesheet" href="/lib/bootstrap-4.0.0-dist/css/bootstrap-reboot.css"/>
+
+        <link type="text/css" rel="stylesheet" href="/styles.css"/>
+        <script type="application/javascript" src="/lib/jquery-3.3.1.min.js"></script>
+        <script type="application/javascript" src="/lib/bootstrap-4.0.0-dist/js/bootstrap.min.js"></script>
+    </head>
+
+    <body>
+        <div class="hero">
+            <div class="action-bar text-right">
+                <span class="username" th:text="${username}">
+                    ${username}
+                </span>
+                <a href="/api/logout">Logout</a>
+            </div>
+        </div>
+
+        <div class="content container">
+            <div class="row">
+                <div class="content-tile paper col-xs-12 col-sm-4 col-md-3" th:each="image : ${images}">
+                    <img th:attr="data-contentId=${image.contentId}" th:src="${image.location}" th:alt="${image.fileName}"/>
+                </div>
+                <div class="upload-tile paper col-xs-12 col-sm-4 col-md-3" th:if="${isAuthenticated} == true">
+                    <form class="upload-form layout-table">
+                        <input type="file" name="content" accept="image/jpg, image/png" style="display:none;"/>
+                        <div class="text-center vertical-align-middle">
+                            <a href="javascript:void(0);">
+                                <img src="/icons/add.png"/>
+                                <div>Upload</div>
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <script type="application/javascript" src="/main.js"></script>
+    </body>
+</html>

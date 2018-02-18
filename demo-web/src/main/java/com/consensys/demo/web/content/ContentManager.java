@@ -26,25 +26,32 @@ public class ContentManager {
     private ContentStore contentStore;
 
     @Transactional
-    public UserContent createContent(Account owner, String contentType, String contentFileName, String fileName, Long size) {
+    public UserContent createContent(Account owner, String contentType, String contentId, String fileName, Long size) {
         UserContent userContent = new UserContent();
         userContent.setContentType(contentType);
         userContent.setContentLength(size);
         userContent.setFileName(fileName);
-        userContent.setContentId(contentFileName);
+        userContent.setContentId(contentId);
         userContent.setOwner(owner);
         userContent = contentIndexRepository.save(userContent);
         return userContent;
     }
 
     public void read(String contentId, OutputStream outputStream) throws IOException {
-        Files.copy(contentStore.getFilePath(contentId), outputStream);
+        UserContent content = contentIndexRepository.findByContentId(contentId);
+        if(content != null) {
+            Files.copy(contentStore.getFilePath(contentId, content.getContentType()), outputStream);
+        }
     }
 
     @Transactional
-    public File write(InputStream inputStream, String contentType) throws IOException {
+    public String write(InputStream inputStream, String contentType) throws IOException {
         File contentFile = contentStore.newContentFile(contentType);
         Files.copy(inputStream, contentFile.toPath());
-        return contentFile;
+        String contentId = contentFile.getName();
+        if(contentId.lastIndexOf(".") > -1) {
+            contentId = contentId.substring(0, contentId.lastIndexOf('.'));
+        }
+        return contentId;
     }
 }

@@ -45,8 +45,8 @@ public class ContentStore {
         return new File(imageRoot, contentId).exists();
     }
 
-    public Path getFilePath(String contentId) {
-        return Paths.get(imageRoot.getAbsolutePath(), contentId);
+    public Path getFilePath(String contentId, String contentType) {
+        return Paths.get(imageRoot.getAbsolutePath(), contentId + getFileExtension(contentType));
     }
 
     public File newContentFile(String contentType) {

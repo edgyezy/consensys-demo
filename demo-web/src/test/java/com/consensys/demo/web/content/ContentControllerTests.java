@@ -75,7 +75,7 @@ public class ContentControllerTests {
         assertEquals("cat.jpg", savedContent.getFileName());
         assertEquals(MediaType.IMAGE_JPEG_VALUE, savedContent.getContentType());
         assertTrue(store.exists(savedContent.getContentId()));
-        assertEquals(testFile.length(), store.getFilePath(savedContent.getContentId()).toFile().length());
+        assertEquals(testFile.length(), store.getFilePath(savedContent.getContentId(), MediaType.IMAGE_JPEG_VALUE).toFile().length());
     }
 
     @Test
