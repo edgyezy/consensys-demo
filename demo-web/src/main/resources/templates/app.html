@@ -37,11 +37,13 @@
                 </div>
                 <div class="upload-tile paper col-xs-12 col-sm-4 col-md-3" th:if="${isAuthenticated} == true">
                     <form class="upload-form layout-table">
-                        <input type="file" name="content" accept="image/jpg, image/png" style="display:none;"/>
+                        <input type="file" name="content" accept="image/jpg, image/png" style="display: none;"/>
                         <div class="text-center vertical-align-middle">
                             <a href="javascript:void(0);">
-                                <img src="/icons/add.png"/>
-                                <div>Upload</div>
+                                <div style="padding: 40px">
+                                    <img src="/icons/add.png"/>
+                                    <div>Upload</div>
+                                </div>
                             </a>
                         </div>
                     </form>

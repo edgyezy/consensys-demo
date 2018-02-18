@@ -12,13 +12,6 @@
 		reader.readAsDataURL(file);
 	};
 
-	var onFileSelected = function() {
-		for(var i=0; i < this.files.length; i++) {
-			handleUpload(this.files[i]);
-		}
-		$(this).val(null);
-	};
-
 	$(document).ready(function() {
 		$upload = $(".upload-form input[type='file']");
 
@@ -38,6 +31,7 @@
 					processData: false,
 					method: 'POST',
 				}).then(handleUpload(files[0]));
+				$(this).val(null);
 			}
 		});
 	});
