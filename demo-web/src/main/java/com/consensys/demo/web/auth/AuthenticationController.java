@@ -81,7 +81,6 @@ public class AuthenticationController {
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
         if(token != null) {
             headers.put("session_token", Arrays.asList(token));
-            headers.put("Location", Arrays.asList("/main/"));
         }
 
         // This should return a 302, but fetch api client side cannot see location header for 3xx, return 200 instead

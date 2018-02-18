@@ -1,0 +1,129 @@
+swagger : "2.0"
+host : "localhost"
+info :
+  version: "1.0.0"
+  description: "A simple application that prints uploaded images to a PDF file."
+  title : "Image to PDF"
+  contact:
+    name: "Calvin Ngo"
+    email : "calvin.ngo@gmail.com"
+schemes:
+  "http"
+
+paths :
+  /api/login:
+    post :
+      summary: "Validates user credentials and issues session token."
+      response :
+        200 :
+          description : "ok"
+        401 :
+          description : "Invalid login credentials"
+      security :
+      - http_basic : []
+
+  /api/register:
+    post :
+      summary : "registers a new user"
+      request :
+        in : "body"
+        content :
+          application/json :
+            schema :
+              $ref : "#/definitions/credentials"
+      response :
+      200 :
+        content :
+          application/json:
+            schema :
+              $ref : "#/definitions/session"
+
+  /api/images:
+    get:
+      summary : "lists all images uploaded by current logged in users, or all images within the application for an unauthenticated guest"
+      responses:
+        '200' :
+          content :
+            application/json :
+              schema :
+                $ref : "#/definitions/content"
+    post:
+      summary : "Accept an image file upload."
+      consumes :
+      - "multipart/form-data"
+      produces :
+      - "application/json"
+      request:
+        in : "body"
+        content:
+          image/png:
+            schema:
+              type: "string"
+              format: "binary"
+          image/jpg:
+            schema:
+              type: "string"
+              format: "binary"
+
+  /content/images.pdf:
+    get:
+      responses:
+        '200':
+          summary: "the master PDF file containing all images"
+          content:
+            application/pdf:
+              schema:
+                type: "binary"
+
+  /content/{contentId}:
+    parameters:
+      - name: "contentId"
+        in: "path"
+        required: "true"
+        summary: "the content identifier used to retrieve a specific piece of content"
+        schema:
+          type: "string"
+    get:
+      responses:
+        '200':
+          summary: "the image being returned"
+          content:
+            image/png:
+              schema:
+                type: "binary"
+            image/jpg :
+              schema:
+                type: "binary"
+
+securityDefinitions:
+  http_basic:
+    type : "http"
+    description : "Basic authentication using username and password"
+    name : "authorization"
+    in : "header"
+  jwt:
+    type : "apiKey"
+    description : "Token authentication using JWT"
+    name : "session_token"
+    in : "cookie"
+
+definitions:
+  credentials:
+    type: object
+    properties :
+      username:
+        type : string
+      password :
+        type : string
+  session:
+    type: string
+    in : "cookie"
+  content :
+    type : object
+    properties :
+      contentId :
+        type : string
+      fileName :
+        type : string
+      location :
+        type : string

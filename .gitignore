@@ -23,4 +23,7 @@ dist/
 nbdist/
 .nb-gradle/
 
-content/
+
+/content/
+!/demo-common/src/
+!/demo-web/src/
