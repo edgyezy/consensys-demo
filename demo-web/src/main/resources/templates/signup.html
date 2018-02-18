@@ -51,7 +51,7 @@
 				    $(".signup-success").removeClass("d-none");
 			    }).fail(function(err) {
 			    	if(err.status == 400) {
-					    $(".error span").text(err.responseText);
+					    $(".error span").text(JSON.parse(err.responseText).message);
                     } else {
 					    $(".error span").text("Sign up failed. Please try again later");
                     }
