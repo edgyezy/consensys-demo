@@ -9,7 +9,6 @@ import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.UUID;
 
 /**
@@ -25,6 +24,10 @@ public class ContentStore {
     private String imageRootPath;
     private File imageRoot;
 
+    @Value("${files.pdfLocation}")
+    private String pdfRootPath;
+    private File pdfRoot;
+
     @PostConstruct
     public void init() throws IOException {
         imageRoot = new File(imageRootPath);
@@ -39,23 +42,41 @@ public class ContentStore {
         if(!imageRoot.canRead() || !imageRoot.canWrite()) {
             throw new IOException("Read/write permissions missing for " + imageRootPath);
         }
-    }
 
-    public boolean exists(String contentId) {
-        return new File(imageRoot, contentId).exists();
+        pdfRoot = new File(pdfRootPath);
+        if(!pdfRoot.exists()) {
+            log.info("PDF root " + pdfRoot.getAbsolutePath() + " does not exist, creating directory.");
+            try {
+                pdfRoot.mkdirs();
+            } catch (SecurityException e) {
+                log.error("Failed to create pdf root", e);
+            }
+        }
+        if(!pdfRoot.canRead() || !imageRoot.canWrite()) {
+            throw new IOException("Read/write permissions missing for " + pdfRootPath);
+        }
     }
 
     public Path getFilePath(String contentId, String contentType) {
-        return Paths.get(imageRoot.getAbsolutePath(), contentId + getFileExtension(contentType));
+        File contentRoot = imageRoot;
+        if("application/pdf".equals(contentType)) {
+            contentRoot = pdfRoot;
+        }
+        return (new File(contentRoot, contentId + getFileExtension(contentType))).toPath();
     }
 
-    public File newContentFile(String contentType) {
+    public File newContentFile(String contentType) throws IOException {
+        File contentRoot = imageRoot;
+        if("application/pdf".equals(contentType)) {
+            contentRoot = pdfRoot;
+        }
         String contentFileName = UUID.randomUUID().toString() + getFileExtension(contentType);
-        File contentFile = new File(imageRoot, contentFileName);
+        File contentFile = new File(contentRoot, contentFileName);
         while (contentFile.exists()) {
             contentFileName = UUID.randomUUID().toString() + getFileExtension(contentType);
-            contentFile = new File(imageRoot, contentFileName);
+            contentFile = new File(contentRoot, contentFileName);
         }
+        contentFile.createNewFile();
         return contentFile;
     }
 
@@ -63,6 +84,7 @@ public class ContentStore {
         switch(contentType) {
             case "image/jpeg" : return ".jpg";
             case "image/png" : return ".png";
+            case "application/pdf" : return ".pdf";
             default : return "";
         }
     }

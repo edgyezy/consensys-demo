@@ -5,13 +5,17 @@ package com.consensys.demo.common.messaging;
  */
 public class ContentMessage {
 
-    public enum Action { CREATED, UPDATED, DELETED}
-
     private String contentId;
+    private String contentType;
     private Exception error;
 
-    public ContentMessage(Action action, String contentId) {
+    public ContentMessage() {
+
+    }
+
+    public ContentMessage(String contentId, String contentType) {
         this.contentId = contentId;
+        this.contentType = contentType;
     }
 
     public ContentMessage(String contentId, Exception error) {
@@ -21,6 +25,10 @@ public class ContentMessage {
 
     public String getContentId() {
         return contentId;
+    }
+
+    public String getContentType() {
+        return contentType;
     }
 
     public Exception getError() {

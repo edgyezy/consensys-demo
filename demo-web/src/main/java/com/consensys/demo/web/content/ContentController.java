@@ -1,10 +1,12 @@
 package com.consensys.demo.web.content;
 
+import com.consensys.demo.common.content.ContentStore;
 import com.consensys.demo.common.messaging.ContentMessage;
 import com.consensys.demo.web.auth.Account;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -15,14 +17,15 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.consensys.demo.common.messaging.ContentMessage.Action.CREATED;
 import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 import static javax.servlet.http.HttpServletResponse.SC_OK;
 
@@ -35,8 +38,14 @@ public class ContentController {
 
     private static final Logger log = LoggerFactory.getLogger(ContentController.class);
 
+    @Value("${files.masterPdfId}")
+    private String masterPdfContentId;
+
     @Autowired
     private ContentManager contentManager;
+
+    @Autowired
+    private ContentStore contentStore;
 
     @Autowired
     private ContentIndexRepository contentIndexRepository;
@@ -44,6 +53,15 @@ public class ContentController {
     @Autowired
     private JmsTemplate jmsTemplate;
 
+    private static File blankPdf;
+
+    public ContentController() {
+        try {
+            blankPdf = new File(getClass().getResource("/blank.pdf").toURI());
+        } catch(NullPointerException | URISyntaxException e) {
+            log.error("Failed to load default blank PDF", e);
+        }
+    }
 
     @GetMapping("/api/images")
     public ResponseEntity<List<ContentDTO>> listImages(Authentication authentication) {
@@ -79,7 +97,7 @@ public class ContentController {
             String contentId = contentManager.write(file.getInputStream(), contentType);
             UserContent content = contentManager.createContent(account, contentType, contentId, file.getName(), file.getSize());
 
-            jmsTemplate.convertAndSend("images", new ContentMessage(CREATED, content.getContentId()));
+            jmsTemplate.convertAndSend("convert_image", new ContentMessage(content.getContentId(), contentType));
             return new ResponseEntity<>(new ContentDTO(content), HttpStatus.OK);
         } catch(IOException | JmsException e) {
             log.error("Failed to handle content upload", e);
@@ -90,16 +108,19 @@ public class ContentController {
     @GetMapping("/content/images.pdf")
     public void getPdf(HttpServletResponse response) {
         log.info("Fetching PDF");
+        response.setContentType("application/pdf");
+        response.setHeader("Content-Disposition", "attachment;filename='images.pdf'");
         try {
-            response.setContentType("application/pdf");
-            response.setContentLengthLong(contentManager.getPdf().length());
-            response.setHeader("Content-Disposition", "attachment;filename='images.pdf'");
-
-            Files.copy(contentManager.getPdf().toPath(), response.getOutputStream());
+            File pdfFile = contentStore.getFilePath(masterPdfContentId, "application/pdf").toFile();
+            if(!pdfFile.exists()) {
+                pdfFile = blankPdf;
+            }
+            response.setContentLengthLong(pdfFile.length());
+            Files.copy(pdfFile.toPath(), response.getOutputStream());
             response.flushBuffer();
             response.setStatus(200);
         } catch (IOException e) {
-            log.error("bad", e);
+            log.error("Failed to send PDF file", e);
         }
     }
 

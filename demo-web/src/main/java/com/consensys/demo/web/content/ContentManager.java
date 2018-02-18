@@ -12,8 +12,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URISyntaxException;
 import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 
 /**
  * Created by Calvin Ngo on 14/2/18.
@@ -30,15 +30,6 @@ public class ContentManager {
     @Autowired
     private ContentStore contentStore;
 
-    private File pdf;
-
-    public ContentManager() {
-        try {
-            pdf = new File(getClass().getResource("/blank.pdf").toURI());
-        } catch(NullPointerException | URISyntaxException e) {
-            log.error("Failed to load default blank PDF", e);
-        }
-    }
 
     @Transactional
     public UserContent createContent(Account owner, String contentType, String contentId, String fileName, Long size) {
@@ -62,15 +53,11 @@ public class ContentManager {
     @Transactional
     public String write(InputStream inputStream, String contentType) throws IOException {
         File contentFile = contentStore.newContentFile(contentType);
-        Files.copy(inputStream, contentFile.toPath());
+        Files.copy(inputStream, contentFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
         String contentId = contentFile.getName();
         if(contentId.lastIndexOf(".") > -1) {
             contentId = contentId.substring(0, contentId.lastIndexOf('.'));
         }
         return contentId;
-    }
-
-    public File getPdf() {
-        return pdf;
     }
 }

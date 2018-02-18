@@ -20,7 +20,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.List;
 
-import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -74,7 +73,6 @@ public class ContentControllerTests {
         UserContent savedContent = result.get(0);
         assertEquals("cat.jpg", savedContent.getFileName());
         assertEquals(MediaType.IMAGE_JPEG_VALUE, savedContent.getContentType());
-        assertTrue(store.exists(savedContent.getContentId()));
         assertEquals(testFile.length(), store.getFilePath(savedContent.getContentId(), MediaType.IMAGE_JPEG_VALUE).toFile().length());
     }
 
