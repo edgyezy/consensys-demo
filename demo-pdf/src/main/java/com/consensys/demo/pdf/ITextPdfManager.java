@@ -4,6 +4,7 @@ import com.consensys.demo.common.content.ContentStore;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Image;
+import com.itextpdf.text.PageSize;
 import com.itextpdf.text.pdf.PdfCopy;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfWriter;
@@ -25,6 +26,8 @@ import java.nio.file.StandardCopyOption;
 @Service
 public class ITextPdfManager {
 	private static Logger log = LoggerFactory.getLogger(ITextPdfManager.class);
+	
+	private static float PAGE_BORDER_PADDING = 10f;
 
 	@Value("${files.masterPdfId}")
 	private String masterPdfContentId;
@@ -39,6 +42,17 @@ public class ITextPdfManager {
 	    try {
             Path imagePath = contentStore.getFilePath(contentId, contentType);
             Image image = Image.getInstance(imagePath.toAbsolutePath().toString());
+            
+            float maxWidth = PageSize.A4.getWidth() - 2f*PAGE_BORDER_PADDING;
+            float maxHeight = PageSize.A4.getHeight() - 2f*PAGE_BORDER_PADDING;
+            
+            if(image.getWidth() > maxWidth || image.getHeight() > maxHeight) {
+            		image.scaleToFit(maxWidth, maxHeight);
+            		image.setAbsolutePosition(PAGE_BORDER_PADDING, maxHeight - image.getScaledHeight());
+            } else {
+            		image.setAbsolutePosition(PAGE_BORDER_PADDING, maxHeight - image.getHeight());
+            }
+            
 
             Document document = new Document();
 
