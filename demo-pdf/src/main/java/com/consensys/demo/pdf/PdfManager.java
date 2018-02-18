@@ -26,9 +26,6 @@ import com.itextpdf.text.pdf.PdfWriter;
 public class PdfManager {
 	private static Logger log = LoggerFactory.getLogger(PdfManager.class);
 
-	@Value("files.imageLocation")
-	private String imageLocation;
-
 	@Value("files.pdfLocation")
 	private String pdfLocation;
 
@@ -38,9 +35,9 @@ public class PdfManager {
 	@Value("files.pdfMasterWrite")
 	private String pdfMasterWrite;
 
-	public void createDocumentPdf(Image img, String imgLocation) throws IOException, DocumentException {
+	public void createDocumentPdf(Image img, String imageFileName) throws IOException, DocumentException {
 		Document document = new Document(img);
-		PdfWriter.getInstance(document, new FileOutputStream(imgLocation));
+		PdfWriter.getInstance(document, new FileOutputStream(this.pdfLocation + "/" + imageFileName + ".pdf" ));
 		document.close();
 	}
 
