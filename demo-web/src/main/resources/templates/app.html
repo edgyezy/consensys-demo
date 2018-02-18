@@ -21,6 +21,13 @@
                 </span>
                 <a href="/api/logout">Logout</a>
             </div>
+
+            <a href="/content/images.pdf">
+                <span class="hero-btn" th:if="${isAuthenticated}">
+                    <span class="icon"></span>
+                </span>
+            </a>
+
         </div>
 
         <div class="content container">

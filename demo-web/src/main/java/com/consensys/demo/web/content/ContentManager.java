@@ -2,6 +2,8 @@ package com.consensys.demo.web.content;
 
 import com.consensys.demo.common.content.ContentStore;
 import com.consensys.demo.web.auth.Account;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,6 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 
 /**
@@ -19,11 +22,23 @@ import java.nio.file.Files;
 @Service
 public class ContentManager {
 
+    private static final Logger log = LoggerFactory.getLogger(ContentManager.class);
+
     @Autowired
     private ContentIndexRepository contentIndexRepository;
 
     @Autowired
     private ContentStore contentStore;
+
+    private File pdf;
+
+    public ContentManager() {
+        try {
+            pdf = new File(getClass().getResource("/blank.pdf").toURI());
+        } catch(NullPointerException | URISyntaxException e) {
+            log.error("Failed to load default blank PDF", e);
+        }
+    }
 
     @Transactional
     public UserContent createContent(Account owner, String contentType, String contentId, String fileName, Long size) {
@@ -53,5 +68,9 @@ public class ContentManager {
             contentId = contentId.substring(0, contentId.lastIndexOf('.'));
         }
         return contentId;
+    }
+
+    public File getPdf() {
+        return pdf;
     }
 }

@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -83,6 +84,22 @@ public class ContentController {
         } catch(IOException | JmsException e) {
             log.error("Failed to handle content upload", e);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/content/images.pdf")
+    public void getPdf(HttpServletResponse response) {
+        log.info("Fetching PDF");
+        try {
+            response.setContentType("application/pdf");
+            response.setContentLengthLong(contentManager.getPdf().length());
+            response.setHeader("Content-Disposition", "attachment;filename='images.pdf'");
+
+            Files.copy(contentManager.getPdf().toPath(), response.getOutputStream());
+            response.flushBuffer();
+            response.setStatus(200);
+        } catch (IOException e) {
+            log.error("bad", e);
         }
     }
 

@@ -49,13 +49,33 @@ form .button-bar {
 .hero {
     width: 100%;
     position: relative;
-    height: 180px;
+    height: 135px;
     color : #fff;
     background-color: #172e60;
 }
 
 .hero .action-bar {
     padding: 10px;
+}
+
+.hero .hero-btn {
+    position: absolute;
+    background-color: #2cca59;
+    width: 64px;
+    height: 64px;
+    border-radius: 32px;
+    right: 48px;
+    bottom: -32px;
+
+}
+
+.hero-btn .icon {
+    background: url("/icons/download.png") no-repeat;
+    position: absolute;
+    width: 28px;
+    height: 36px;
+    top: 12px;
+    left: 18px;
 }
 
 .hero a {
@@ -70,7 +90,7 @@ form .button-bar {
 .content {
     margin-left: auto;
     margin-right: auto;
-    padding: 20px;
+    padding: 52px 20px 20px 20px;
     max-width: 1024px;
 }
 
