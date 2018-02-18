@@ -23,8 +23,8 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 
 @Service
-public class PdfManager {
-	private static Logger log = LoggerFactory.getLogger(PdfManager.class);
+public class ITextPdfManager {
+	private static Logger log = LoggerFactory.getLogger(ITextPdfManager.class);
 
 	@Value("${files.masterPdfId}")
 	private String masterPdfContentId;

@@ -20,7 +20,7 @@ public class MessageListener {
     private static Logger log = LoggerFactory.getLogger(MessageListener.class);
 
     @Autowired
-    private PdfManager pdfManager;
+    private ITextPdfManager pdfManager;
 
     @JmsListener(destination = "convert_image")
     public void receiveImageUploadedMessage(ContentMessage message) {
