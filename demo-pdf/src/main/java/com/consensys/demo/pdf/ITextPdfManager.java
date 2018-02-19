@@ -27,7 +27,8 @@ import java.nio.file.StandardCopyOption;
 public class ITextPdfManager {
 	private static Logger log = LoggerFactory.getLogger(ITextPdfManager.class);
 	
-	private static float PAGE_BORDER_PADDING = 10f;
+	@Value("${pdf.border.margin}")
+	private float pdfBorderMargin;
 
 	@Value("${files.masterPdfId}")
 	private String masterPdfContentId;
@@ -43,14 +44,14 @@ public class ITextPdfManager {
             Path imagePath = contentStore.getFilePath(contentId, contentType);
             Image image = Image.getInstance(imagePath.toAbsolutePath().toString());
             
-            float maxWidth = PageSize.A4.getWidth() - 2f*PAGE_BORDER_PADDING;
-            float maxHeight = PageSize.A4.getHeight() - 2f*PAGE_BORDER_PADDING;
-            
+            // Set image scaling for large images bigger than A4 size
+            float maxWidth = PageSize.A4.getWidth() - 2f*pdfBorderMargin;
+            float maxHeight = PageSize.A4.getHeight() - 2f*pdfBorderMargin;
             if(image.getWidth() > maxWidth || image.getHeight() > maxHeight) {
             		image.scaleToFit(maxWidth, maxHeight);
-            		image.setAbsolutePosition(PAGE_BORDER_PADDING, maxHeight - image.getScaledHeight());
+            		image.setAbsolutePosition(pdfBorderMargin, maxHeight - image.getScaledHeight());
             } else {
-            		image.setAbsolutePosition(PAGE_BORDER_PADDING, maxHeight - image.getHeight());
+            		image.setAbsolutePosition(pdfBorderMargin, maxHeight - image.getHeight());
             }
             
 
