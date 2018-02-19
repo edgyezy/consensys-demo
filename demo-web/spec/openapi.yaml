@@ -1,0 +1,129 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  description: A simple application that prints uploaded images to a PDF file.
+  title: Image to PDF
+  contact:
+    name: Calvin Ngo
+    email: calvin.ngo@gmail.com
+servers:
+  - url: http://localhost:8080
+paths:
+  /api/login:
+    post:
+      summary: Validates user credentials and issues session token.
+      responses:
+        '200':
+          description: ok
+        '401':
+          description: Invalid login credentials
+      security:
+        - http_basic: []
+  /api/register:
+    post:
+      summary: registers a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/credentials'
+      responses: 
+        '200':
+          description: user session
+          headers:
+            Set-Cookie:
+              schema:
+                $ref: '#/components/schemas/session'
+  /api/images:
+    get:
+      summary: >-
+        lists all images uploaded by current logged in users, or all images
+        within the application for an unauthenticated guest
+      responses:
+        '200':
+          description: image content
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/content'
+    post:
+      summary: Accept an image file upload.
+      requestBody:
+        content:
+          image/png:
+            schema:
+              type: string
+              format: binary
+          image/jpg:
+            schema:
+              type: string
+              format: binary
+      responses: 
+        '200':
+          description: user session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/session'
+  /content/images.pdf:
+    get:
+      responses:
+        '200':
+          description: the master PDF file containing all images
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+  '/content/{contentId}':
+    parameters:
+      - name: contentId
+        in: path
+        required: true
+        description: the content identifier used to retrieve a specific piece of content
+        schema:
+          type: string
+    get:
+      responses:
+        '200':
+          description: the image being returned in PNG or JPEG format
+          content:
+            image/png:
+              schema:
+                type: string
+                format: binary
+            image/jpg:
+              schema:
+                type: string
+                format: binary
+components:
+  securitySchemes:
+    BasicAuth:     # <-- arbitrary name for the security scheme
+      type: http
+      scheme: basic
+    jwt:
+      type: apiKey
+      description: Token authentication using JWT
+      name: session_token
+      in: header
+  schemas:
+    credentials:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+    session:
+      type: string
+      description: session cookie
+    content:
+      type: object
+      properties:
+        contentId:
+          type: string
+        fileName:
+          type: string
+        location:
+          type: string
